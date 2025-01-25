@@ -5,6 +5,7 @@ const userRoute = require('./routes/user')
 const bodyParser = require("body-parser");
 const cors=require('cors');
 const dotenv = require("dotenv");
+const linkRoute=require('./routes/createLink')
 dotenv.config();
 
 
@@ -15,6 +16,8 @@ app.use(express.urlencoded({ extended: true}));
 app.use(bodyParser.json());
 
 app.use('/api/user',userRoute);
+app.use('/api/link',linkRoute);
+app.use("/", linkRoute);
 
 
 
