@@ -4,6 +4,7 @@ const shortid = require("shortid");
 const Link = require("../Schema/createLink.schema");
 const authMiddleware = require('../Middlewares/auth');
 const Click = require("../Schema/click.schema");
+const { default: mongoose } = require("mongoose");
 
 const router = express.Router();
 
@@ -252,12 +253,14 @@ router.get("/click/userclicksoverall", authMiddleware, async (req, res) => {
 });
 
 // GET: Retrieve click counts by date for the current user
-router.get("/userclicks/datewise", authMiddleware, async (req, res) => {
+router.get("/userclicks/devicewise", authMiddleware, async (req, res) => {
     try {
+
+        
         const clicks = await Click.aggregate([
             { $group: { _id: "$deviceType", totalClicks: { $sum: 1 } } },
         ]);
-
+         
         res.status(200).json({ clicks });
     } catch (error) {
         console.error(error);
@@ -267,19 +270,45 @@ router.get("/userclicks/datewise", authMiddleware, async (req, res) => {
 
 
 // GET: Retrieve click counts by device type for the current user
-router.get("/userclicks/devicewise", authMiddleware, async (req, res) => {
+router.get("/userclicks/datewise", authMiddleware, async (req, res) => {
     try {
+        const userId = req.user.id;
+
+        // Ensure the aggregation matches clicks only for the logged-in user
         const clicks = await Click.aggregate([
-            { $group: { _id: { $dateToString: { format: "%Y-%m-%d", date: "$date" } }, totalClicks: { $sum: 1 } } },
+            { $match: { userId: new mongoose.Types.ObjectId(userId) } }, // Correct usage of ObjectId
+            {
+                $group: {
+                    _id: { $dateToString: { format: "%Y-%m-%d", date: "$date" } },
+                    dailyClicks: { $sum: 1 },
+                },
+            },
             { $sort: { _id: 1 } }, // Sort by date in ascending order
         ]);
 
-        res.status(200).json({ clicks });
+        // Calculate cumulative clicks
+        let cumulativeClicks = 0;
+        const cumulativeClickData = clicks.map((click) => {
+            cumulativeClicks += click.dailyClicks;
+            return {
+                date: click._id,
+               // dailyClicks: click.dailyClicks,
+                totalClicks: cumulativeClicks,
+            };
+        });
+
+        // Calculate total link clicks across all links for the user
+        const totalLinkClicks = await Click.countDocuments({ userId: new mongoose.Types.ObjectId(userId) });
+
+        res.status(200).json({ cumulativeClickData });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Server error. Please try again later." });
     }
 });
+
+
+
 
 
 module.exports = router;
