@@ -105,7 +105,7 @@ router.put('/edituser', authMiddleware, async (req, res) => {
           id: user._id,
       };
       const token = jwt.sign(payload, process.env.JWT_SECRET);
-      return res.status(200).json({ token });
+      return res.status(200).json({token:token,name:updatedUser.name}); 
       } else {
           return res.status(500).json({ message: "Failed to update user" });
       }
@@ -117,12 +117,17 @@ router.put('/edituser', authMiddleware, async (req, res) => {
 
   
 
-router.get('/data',(req,res)=>{
-   
-    User.find().then((data)=>{
-        return res.json(data);
-        }).catch((err)=>{
-            res.status(400).json({message:"Error has come"});
-            })
-})
+//write a rought to get the user name
+router.get('/getusername', authMiddleware, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+            }
+            return res.status(200).json({ name: user.name });
+            } catch (err) {
+            console.error("Error getting user:", err);
+            res.status(500).json({ message: "Internal Server Error" });
+            }
+            });
 module.exports = router;
