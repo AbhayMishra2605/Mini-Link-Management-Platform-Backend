@@ -88,7 +88,6 @@ router.put('/edituser', authMiddleware, async (req, res) => {
               message: "Please provide at least one field to update."
           });
       }
-      //check that if thw give email is already exist in the database
         if (email) {
             const existingUser = await User.findOne({ email });
             if (existingUser && existingUser._id.toString() !== req.user.id) {
