@@ -85,7 +85,7 @@ date: new Date(),
 await newClick.save();
 
         // Extract device and IP information
-        const ipAddress = req.ip;
+        const ipAddress = req.headers['x-forwarded-for'] || req.ip;
         
         const userAgent = req.get("User-Agent");
 
