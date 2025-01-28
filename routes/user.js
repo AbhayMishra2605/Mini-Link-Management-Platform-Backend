@@ -85,9 +85,16 @@ router.put('/edituser', authMiddleware, async (req, res) => {
       
       if (!name && !email && !mobile ) {
           return res.status(400).json({
-              message: "No data provided to update. Please provide at least one field to update."
+              message: "Please provide at least one field to update."
           });
       }
+      //check that if thw give email is already exist in the database
+        if (email) {
+            const existingUser = await User.findOne({ email });
+            if (existingUser && existingUser._id.toString() !== req.user.id) {
+                return res.status(400).json({ message: "Email already exists" });
+            }
+            }
 
       const updatedFields = {};
       if (name) updatedFields.name = name;
@@ -130,4 +137,25 @@ router.get('/getusername', authMiddleware, async (req, res) => {
             res.status(500).json({ message: "Internal Server Error" });
             }
             });
+
+
+
+
+//write a rought to delete the user
+router.delete('/deleteuser', authMiddleware, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+            }
+            await User.findByIdAndDelete(req.user.id);
+            return res.status(200).json({ message: "User deleted successfully" });
+            } catch (err) {
+                console.error("Error deleting user:", err);
+                res.status(500).json({ message: "Internal Server Error" });
+                }
+                }
+                );
+
+            
 module.exports = router;

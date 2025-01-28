@@ -19,6 +19,7 @@
     "mongoose": "^8.9.5",
     "nodemon": "^3.1.9",
     "shortid": "^2.2.17",
-    "ua-parser-js": "^2.0.0"
+    "ua-parser-js": "^2.0.0",
+    "useragent": "^2.3.0"
   }
 }

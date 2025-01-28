@@ -14,7 +14,7 @@ const ClickSchema = new mongoose.Schema({
     deviceType: {
         type: String,
         required: true,
-        enum: ["mobile", "tablet", "desktop"],
+        
     },
     date: {
         type: Date,
