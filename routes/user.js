@@ -6,6 +6,9 @@ const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 dotenv.config();
 const authMiddleware = require('../Middlewares/auth')
+const ClickDetails =require("../Schema/responne.schema")
+const Click = require("../Schema/click.schema");
+const Link = require("../Schema/createLink.schema");
 
 
 
@@ -147,7 +150,21 @@ router.delete('/deleteuser', authMiddleware, async (req, res) => {
         if (!user) {
             return res.status(404).json({ message: "User not found" });
             }
+        const userId = req.user.id;
+        const deleteClickDetails = await ClickDetails.find({ userId })
+        if (deleteClickDetails.length > 0) {
+            await ClickDetails.deleteMany({ userId });
+            }
+        const deleteLink =await Link.find({ userId });
+        if (deleteLink.length > 0) {
+            await Link.deleteMany({ userId });
+            }
+        const deleteClick = await Click.find({ userId });
+        if (deleteClick.length > 0) {
+            await Click.deleteMany({ userId });
+            }
             await User.findByIdAndDelete(req.user.id);
+            
             return res.status(200).json({ message: "User deleted successfully" });
             } catch (err) {
                 console.error("Error deleting user:", err);
@@ -155,6 +172,7 @@ router.delete('/deleteuser', authMiddleware, async (req, res) => {
                 }
                 }
                 );
+
 
             
 module.exports = router;
