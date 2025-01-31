@@ -165,5 +165,10 @@ router.delete('/deleteuser', authMiddleware, async (req, res) => {
                 }
                 );
 
+
+router.get("/varify-user",authMiddleware,(req,res)=>{
+    res.status(200).json({message:"User is verified"});
+})
+
             
 module.exports = router;
