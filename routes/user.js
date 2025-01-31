@@ -5,10 +5,10 @@ const bcrypt = require('bcryptjs');
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 dotenv.config();
-const authMiddleware = require('../Middlewares/auth')
 const ClickDetails =require("../Schema/responne.schema")
 const Click = require("../Schema/click.schema");
 const Link = require("../Schema/createLink.schema");
+const authMiddleware = require('../Middlewares/auth')
 
 
 
@@ -33,13 +33,13 @@ router.post("/register", async (req, res) => {
           email,
           mobile,
           password: hashedPassword,
-      });
+             });
 
       const payload = {
-        id: user._id,
+        id: user._id, tokenIssuedAt: user.tokenIssuedAt
     };
-      
-    const token = jwt.sign(payload, process.env.JWT_SECRET);
+      console.log(user.tokenIssuedAt);
+    const token = jwt.sign(payload, process.env.JWT_SECRET,{expiresIn:"7d"});
    
    return res.status(200).json({ 
     message: "User and dashboard created successfully", 
@@ -68,60 +68,52 @@ router.post("/login", async (req, res) => {
         return res.status(400).json({ message: "Wrong username or password" });
     }
     const payload = {
-        id: user._id,
+        id: user._id,tokenIssuedAt: user.tokenIssuedAt
     };
-    const token = jwt.sign(payload, process.env.JWT_SECRET);
+    const token = jwt.sign(payload, process.env.JWT_SECRET,{expiresIn:"7d"});
     return res.status(200).json({ token:token,
     name:user.name });
 })
 
 
 router.put('/edituser', authMiddleware, async (req, res) => {
-  const { name, email, mobile } = req.body;
+    const { name, email, mobile } = req.body;
 
-  try {
-      const user = await User.findById(req.user.id);
-      if (!user) {
-          return res.status(404).json({ message: "User not found" });
-      }
+    try {
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
 
-      
-      if (!name && !email && !mobile ) {
-          return res.status(400).json({
-              message: "Please provide at least one field to update."
-          });
-      }
+        let emailUpdated = false; // Track if email is updated
+
         if (email) {
             const existingUser = await User.findOne({ email });
             if (existingUser && existingUser._id.toString() !== req.user.id) {
                 return res.status(400).json({ message: "Email already exists" });
             }
-            }
 
-      const updatedFields = {};
-      if (name) updatedFields.name = name;
-      if (email) updatedFields.email = email;
-      if (mobile) updatedFields.mobile = mobile;
-      
-     
+            // Update email & token timestamp to log out all devices
+            user.email = email;
+            user.tokenIssuedAt = Date.now();
+            emailUpdated = true;
+        }
 
-      
-      const updatedUser = await User.findByIdAndUpdate(req.user.id, updatedFields, { new: true });
+        if (name) user.name = name;
+        if (mobile) user.mobile = mobile;
 
-      if (updatedUser) {
-          
-        const payload = {
-          id: user._id,
-      };
-      const token = jwt.sign(payload, process.env.JWT_SECRET);
-      return res.status(200).json({token:token,name:updatedUser.name}); 
-      } else {
-          return res.status(500).json({ message: "Failed to update user" });
-      }
-  } catch (err) {
-      console.error("Error updating user:", err);
-      res.status(500).json({ message: "Internal Server Error" });
-  }
+        await user.save();
+
+        if (emailUpdated) {
+            return res.status(200).json({ message: "Email updated. Please log in again." });
+        } else {
+            return res.status(200).json({ message: "User updated successfully." });
+        }
+
+    } catch (err) {
+        console.error("Error updating user:", err);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
 });
 
   
@@ -172,7 +164,6 @@ router.delete('/deleteuser', authMiddleware, async (req, res) => {
                 }
                 }
                 );
-
 
             
 module.exports = router;
