@@ -7,8 +7,8 @@ const Click = require("../Schema/click.schema");
 const { default: mongoose } = require("mongoose");
 const ClickDetails =require("../Schema/responne.schema")
 const router = express.Router();
-// POST: Create a new shortened link
-// POST: Create a new shortened link
+
+
 router.post("/createlink", authMiddleware, async (req, res) => {
     try {
         const { destinationUrl, comments, linkExpiration, expirationDate } = req.body;
