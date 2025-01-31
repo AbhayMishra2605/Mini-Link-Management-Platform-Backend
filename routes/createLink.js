@@ -7,7 +7,6 @@ const Click = require("../Schema/click.schema");
 const { default: mongoose } = require("mongoose");
 const ClickDetails =require("../Schema/responne.schema")
 const router = express.Router();
-
 // POST: Create a new shortened link
 // POST: Create a new shortened link
 router.post("/createlink", authMiddleware, async (req, res) => {
@@ -47,9 +46,6 @@ router.post("/createlink", authMiddleware, async (req, res) => {
 });
 
 
-// GET: Redirect to the actual destination URL
-// GET: Redirect to the actual destination URL and track click
-// GET: Redirect to the actual destination URL and track click
 
 
 router.get("/:shortUrlCode", async (req, res) => {
