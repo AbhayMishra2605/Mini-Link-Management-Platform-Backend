@@ -13,7 +13,7 @@ const authMiddleware =async(req, res, next) => {
         const user = await User.findById(decoded.id);
        
 
-          if (user.tokenIssuedAt > decoded.tokenIssuedAt) {
+           if (user.tokenIssuedAt && user.tokenIssuedAt > decoded.iat * 1000) {
             return res.status(401).json({ message: "Session expired, please log in again" });
         }
         
