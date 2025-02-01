@@ -22,8 +22,6 @@ router.post("/createlink", authMiddleware, async (req, res) => {
        if (linkExpiration && expirationDate) {
             expDateUTC = new Date(expirationDate);
 
-            console.log("📌 Received Expiration Date:", expirationDate);
-            console.log("📌 Converted to UTC:", expDateUTC);
 
             if (expDateUTC < new Date()) {
                 return res.status(400).json({ error: "Expiration date must be in the future." });
@@ -208,14 +206,20 @@ router.get("/userlinks/data", authMiddleware, async (req, res) => {
         // Transform the data to include only the required fields
         const transformedLinks = links.map((link) => {
             // Format the updatedAt field
-            const formattedUpdatedAt = new Date(link.updatedAt).toLocaleString("en-US", {
-                year: "numeric",
-                month: "short",
-                day: "2-digit",
-                hour: "2-digit",
-                minute: "2-digit",
-                hour12: false,
-            });
+           const updatedAtUTC = new Date(link.updatedAt);
+const updatedAtIST = new Date(updatedAtUTC.getTime() + (5.5 * 60 * 60 * 1000));
+
+const formattedUpdatedAt = updatedAtIST.toLocaleString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+    timeZone: "Asia/Kolkata",
+});
+
+
 
            
            
