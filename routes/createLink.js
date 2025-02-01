@@ -335,13 +335,34 @@ router.get("/userlinks/:id", authMiddleware, async (req, res) => {
             return res.status(404).json({ error: "Link not found or you do not have permission to view it." });
         }
 
-        res.status(200).json({ message: "Link retrieved successfully.", link });
+        const formattedUpdatedAt = new Date(link.updatedAt).toLocaleString("en-US", {
+            year: "numeric",
+            month: "short",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false,
+        });
+
+        const expirationDate = new Date(link.expirationDate).toISOString().slice(0, 16);
+
+        const transformedLink = {
+            _id: link._id,
+            updatedAt: formattedUpdatedAt,
+            destinationUrl: link.destinationUrl,
+            shortUrl: link.shortUrl,
+            comments: link.comments,
+            clickCount: link.clickCount,
+            linkExpiration: link.linkExpiration,
+            expirationDate: expirationDate,
+        };
+
+        res.status(200).json({ message: "Link retrieved successfully.", link: transformedLink });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Server error. Please try again later." });
     }
 });
-
 
 
 
