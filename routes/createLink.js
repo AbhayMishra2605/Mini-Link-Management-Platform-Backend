@@ -59,11 +59,16 @@ router.get("/:shortUrlCode", async (req, res) => {
         if (!link) {
             return res.status(404).json({ error: "Short URL not found." });
         }
+        const now = new Date();
 
-        if (link.linkExpiration && link.expirationDate < new Date()) {
+    const localoffset = now.getTimezoneOffset() * 60000; 
+
+const localISOTime = new Date(now - localoffset).toISOString();
+    console.log("local",localISOTime);
+        if (link.linkExpiration && link.expirationDate < localISOTime ) {
             return res.status(410).json({ error: "Link has expired." });
         }
-            console.log(link.expirationDate);
+            console.log("expirationDate",link.expirationDate);
         link.clickCount += 1;
         await link.save();
          // Track the click event
