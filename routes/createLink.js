@@ -205,9 +205,9 @@ router.get("/userlinks/data", authMiddleware, async (req, res) => {
 
         // Transform the data to include only the required fields
         const transformedLinks = links.map((link) => {
-            // Format the updatedAt field
-           const updatedAtUTC = new Date(link.updatedAt);
-const updatedAtIST = new Date(updatedAtUTC.getTime() + (5.5 * 60 * 60 * 1000));
+            
+           const updatedAtUTC = new Date(link.updatedAt); 
+const updatedAtIST = new Date(updatedAtUTC.getTime() + (5.5 * 60 * 60 * 1000)); 
 
 const formattedUpdatedAt = updatedAtIST.toLocaleString("en-US", {
     year: "numeric",
