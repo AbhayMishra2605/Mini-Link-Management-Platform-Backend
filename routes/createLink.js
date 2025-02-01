@@ -60,12 +60,13 @@ router.get("/:shortUrlCode", async (req, res) => {
             return res.status(404).json({ error: "Short URL not found." });
         }
         const now = new Date();
+const istTime = now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" });
 
-    const localoffset = now.getTimezoneOffset() * 60000; 
+const formattedIST = new Date(istTime).toISOString().slice(0, 16); // `YYYY-MM-DDTHH:mm`
+console.log("IST Time:", formattedIST);
 
-const localISOTime = new Date(now - localoffset).toISOString();
-    console.log("local",localISOTime);
-        if (link.linkExpiration && link.expirationDate < localISOTime ) {
+
+        if (link.linkExpiration && link.expirationDate < formattedIST ) {
             return res.status(410).json({ error: "Link has expired." });
         }
             console.log("expirationDate",link.expirationDate);
