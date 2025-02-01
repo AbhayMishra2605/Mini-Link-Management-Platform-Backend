@@ -25,7 +25,6 @@ router.post("/createlink", authMiddleware, async (req, res) => {
             }
         }
         
-        console.log(expirationDate);
 
         const shortUrlCode = shortid.generate();
         const shortUrl = `${req.protocol}://${req.get("host")}/${shortUrlCode}`;
@@ -71,8 +70,7 @@ const nowISTFormatted = new Date().toLocaleString("en-US", { timeZone: "Asia/Kol
 
 const nowIST = new Date(nowISTFormatted).toISOString().slice(0, 16); // Convert to the same format
 
-console.log("Formatted Expiration Date:", expirationTimeFormatted);
-console.log("IST Time:", nowIST);
+
 
 if (link.linkExpiration && expirationTimeFormatted < nowIST) {
     return res.status(410).json({ error: "Link has expired." });
@@ -90,7 +88,7 @@ const newClick = new Click({
 linkId: link._id,
 userId: link.userId,
 deviceType,
-date: new Date(),
+date: nowIST,
 
 });
     
@@ -112,6 +110,7 @@ await newClick.save();
             userId: link.userId,
             originalLink: link.destinationUrl,
             shortLink: link.shortUrl,
+            date:nowIST,
             ipAddress,
             deviceInfo: `${deviceInfo} (${userAgent})`,
         });
