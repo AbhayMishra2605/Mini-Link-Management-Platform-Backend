@@ -220,7 +220,7 @@ router.get("/userlinks/data", authMiddleware, async (req, res) => {
 
 
 
-           
+            const expirationDate = new Date(link.expirationDate).toISOString().slice(0, 16);
            
 
             return {
