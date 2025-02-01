@@ -88,7 +88,7 @@ const newClick = new Click({
 linkId: link._id,
 userId: link.userId,
 deviceType,
-date:"2025-02-05T12:00",
+date:nowIST,
 
 });
     
