@@ -40,7 +40,7 @@ router.post("/createlink", authMiddleware, async (req, res) => {
             const [day, month, year, hour, minute] = formattedDate.match(/\d+/g);
 
             formattedExpirationDate = `${year}-${month}-${day}T${hour}:${minute}`;
-        }
+        } console.log (formattedExpirationDate);
 
         const shortUrlCode = shortid.generate();
         const shortUrl = `${req.protocol}://${req.get("host")}/${shortUrlCode}`;
