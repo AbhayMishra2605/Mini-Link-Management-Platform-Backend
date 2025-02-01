@@ -231,7 +231,7 @@ router.get("/userlinks/data", authMiddleware, async (req, res) => {
                 comments: link.comments,
                 clickCount: link.clickCount,
                 linkExpiration: link.linkExpiration,
-                linkExpirationDate: link.expirationDate,
+                linkExpirationDate: expirationDate,
             };
         });
         const totalLinks = await Link.countDocuments({ userId: req.user.id });
@@ -289,6 +289,8 @@ router.get("/userlinks/remarks", authMiddleware, async (req, res) => {
                 hour12: false,
                 timeZone: "Asia/Kolkata",
             });
+                const expirationDate = new Date(link.expirationDate).toISOString().slice(0, 16);
+
 
             return {
                 _id: link._id,
@@ -298,7 +300,7 @@ router.get("/userlinks/remarks", authMiddleware, async (req, res) => {
                 comments: link.comments,
                 clickCount: link.clickCount,
                 linkExpiration: link.linkExpiration,
-                linkExpirationDate: link.expirationDate,
+                linkExpirationDate: expirationDate,
             };
         });
 
