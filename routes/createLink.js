@@ -16,11 +16,16 @@ router.post("/createlink", authMiddleware, async (req, res) => {
         if (!destinationUrl) {
             return res.status(400).json({ error: "Destination URL is mandatory." });
         }
+        
+        let expDateUTC = null;
 
-        if (linkExpiration && expirationDate) {
-            const currentDate = new Date();
-            const expDate = new Date(expirationDate);
-            if (expDate < currentDate) {
+       if (linkExpiration && expirationDate) {
+            expDateUTC = new Date(expirationDate);
+
+            console.log("📌 Received Expiration Date:", expirationDate);
+            console.log("📌 Converted to UTC:", expDateUTC);
+
+            if (expDateUTC < new Date()) {
                 return res.status(400).json({ error: "Expiration date must be in the future." });
             }
         }
@@ -35,7 +40,7 @@ router.post("/createlink", authMiddleware, async (req, res) => {
             shortUrl,
             comments,
             linkExpiration,
-            expirationDate: linkExpiration ? expirationDate  : null,
+            expirationDate: linkExpiration ? expDateUTC  : null,
         });
         console.log(expirationDate);
         await newLink.save();
