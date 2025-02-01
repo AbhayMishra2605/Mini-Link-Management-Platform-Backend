@@ -63,13 +63,18 @@ router.get("/:shortUrlCode", async (req, res) => {
 const istTime = now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" });
 
 const formattedIST = new Date(istTime).toISOString().slice(0, 16); // `YYYY-MM-DDTHH:mm`
+
+
+        
+const expirationTimeFormatted = link.expirationDate.slice(0, 16); // Trim to `YYYY-MM-DDTHH:mm`
+
+console.log("Formatted Expiration Date:", expirationTimeFormatted);
 console.log("IST Time:", formattedIST);
 
+if (link.linkExpiration && expirationTimeFormatted < formattedIST) {
+    return res.status(410).json({ error: "Link has expired." });
+}
 
-        if (link.linkExpiration && link.expirationDate < formattedIST ) {
-            return res.status(410).json({ error: "Link has expired." });
-        }
-            console.log("expirationDate",link.expirationDate);
         link.clickCount += 1;
         await link.save();
          // Track the click event
