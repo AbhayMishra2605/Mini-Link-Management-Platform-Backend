@@ -66,14 +66,18 @@ const formattedIST = new Date(istTime).toISOString().slice(0, 16); // `YYYY-MM-D
 
 
         
-const expirationTimeFormatted = link.expirationDate.slice(0, 16); // Trim to `YYYY-MM-DDTHH:mm`
+const expirationTimeFormatted = new Date(link.expirationDate).toISOString().slice(0, 16);
+const nowISTFormatted = new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" });
+
+const nowIST = new Date(nowISTFormatted).toISOString().slice(0, 16); // Convert to the same format
 
 console.log("Formatted Expiration Date:", expirationTimeFormatted);
-console.log("IST Time:", formattedIST);
+console.log("IST Time:", nowIST);
 
-if (link.linkExpiration && expirationTimeFormatted < formattedIST) {
+if (link.linkExpiration && expirationTimeFormatted < nowIST) {
     return res.status(410).json({ error: "Link has expired." });
 }
+
 
         link.clickCount += 1;
         await link.save();
