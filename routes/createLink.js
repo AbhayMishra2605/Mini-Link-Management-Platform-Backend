@@ -63,7 +63,7 @@ router.get("/:shortUrlCode", async (req, res) => {
         if (link.linkExpiration && link.expirationDate < new Date()) {
             return res.status(410).json({ error: "Link has expired." });
         }
-
+            console.log(link.expirationDate);
         link.clickCount += 1;
         await link.save();
          // Track the click event
