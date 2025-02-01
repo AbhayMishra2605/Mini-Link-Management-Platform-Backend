@@ -37,7 +37,7 @@ router.post("/createlink", authMiddleware, async (req, res) => {
             linkExpiration,
             expirationDate: linkExpiration ? expirationDate  : null,
         });
-
+        console.log(expirationDate);
         await newLink.save();
         res.status(201).json({ message: "Link created successfully", link: newLink });
     } catch (error) {
@@ -58,10 +58,7 @@ router.get("/:shortUrlCode", async (req, res) => {
         if (!link) {
             return res.status(404).json({ error: "Short URL not found." });
         }
-        const now = new Date();
-const istTime = now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" });
-
-const formattedIST = new Date(istTime).toISOString().slice(0, 16); // `YYYY-MM-DDTHH:mm`
+       
 
 
         
