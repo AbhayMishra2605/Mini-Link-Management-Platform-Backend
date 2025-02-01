@@ -24,23 +24,7 @@ router.post("/createlink", authMiddleware, async (req, res) => {
                 return res.status(400).json({ error: "Expiration date must be in the future." });
             }
         }
-        let formattedExpirationDate = null;
-        if (expirationDate) {
-            const now = new Date(expirationDate); // Convert input to Date object
-            const options = {
-                timeZone: 'Asia/Kolkata',
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: false,
-            };
-            const formattedDate = new Intl.DateTimeFormat('en-GB', options).format(now);
-            const [day, month, year, hour, minute] = formattedDate.match(/\d+/g);
-
-            formattedExpirationDate = `${year}-${month}-${day}T${hour}:${minute}`;
-        } console.log (formattedExpirationDate);
+        
         console.log(expirationDate);
 
         const shortUrlCode = shortid.generate();
@@ -52,7 +36,7 @@ router.post("/createlink", authMiddleware, async (req, res) => {
             shortUrl,
             comments,
             linkExpiration,
-            expirationDate: linkExpiration ? formattedExpirationDate  : null,
+            expirationDate: linkExpiration ? expirationDate  : null,
         });
 
         await newLink.save();
