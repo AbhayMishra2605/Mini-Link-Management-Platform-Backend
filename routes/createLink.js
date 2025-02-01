@@ -287,6 +287,7 @@ router.get("/userlinks/remarks", authMiddleware, async (req, res) => {
                 hour: "2-digit",
                 minute: "2-digit",
                 hour12: false,
+                timeZone: "Asia/Kolkata",
             });
 
             return {
