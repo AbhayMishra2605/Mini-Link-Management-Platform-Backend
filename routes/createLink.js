@@ -204,21 +204,18 @@ router.get("/userlinks/data", authMiddleware, async (req, res) => {
             .limit(limitNum);
 
         // Transform the data to include only the required fields
-                const transformedLinks = links.map((link) => {
+               const transformedLinks = links.map((link) => {
+            // Format the updatedAt field
+            const formattedUpdatedAt = new Date(link.updatedAt).toLocaleString("en-US", {
+                year: "numeric",
+                month: "short",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: false,
+                timeZone: "Asia/Kolkata",
+            });
 
-       const expirationTimeFormatted = new Date(link.updatedAt).toISOString();
-const nowISTFormatted = new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" });
-
-const nowIST = new Date(nowISTFormatted).toISOString();
-
-const formattedUpdatedAt = nowIST.toLocaleString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false, 
-});
 
 
 
