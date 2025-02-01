@@ -24,6 +24,22 @@ router.post("/createlink", authMiddleware, async (req, res) => {
                 return res.status(400).json({ error: "Expiration date must be in the future." });
             }
         }
+        if(expirationDate){
+            const now =expirationDate;
+            const options = {
+  timeZone: 'Asia/Kolkata',
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+  hour: '2-digit',
+  minute: '2-digit',
+  hour12: false, // Use 24-hour format
+};
+            const formattedDate = new Intl.DateTimeFormat('en-GB', options).format(now);
+
+const [day, month, year, hour, minute] = formattedDate.match(/\d+/g);
+const expirationDate = `${year}-${month}-${day}T${hour}:${minute}`;
+        }
 
         const shortUrlCode = shortid.generate();
         const shortUrl = `${req.protocol}://${req.get("host")}/${shortUrlCode}`;
