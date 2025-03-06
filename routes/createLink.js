@@ -72,7 +72,7 @@ const nowIST = new Date(nowISTFormatted).toISOString().slice(0, 16); // Convert 
 
 
 
-if (link.linkExpiration && expirationTimeFormatted < nowIST) {
+if (link.linkExpiration && expirationTimeFormatted <= nowIST) {
     return res.status(410).json({ error: "Link has expired." });
 }
 
